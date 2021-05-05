@@ -88,8 +88,9 @@ class Layout extends React.Component {
       let a = atoms.get(symbol);
       ratio.set(symbol, {
         at: parseFloat(a) / parseFloat(atomCount),
-        wt: (pt.periodicTable.getWeight(z) * a) / fw
+        wt: (pt.periodicTable.getWeight(z) * a) / parseFloat(fw)
       });
+      console.log(ratio.get(symbol));
     }
 
     this.setState({
@@ -123,8 +124,8 @@ class Layout extends React.Component {
       keys.push(symbol);
     }
     for(let symbol of keys.sort(
-      (a, b) => pt.periodicTable.symbolToNo(a) - pt.periodicTable.symbolToNo(b))
-    ) {
+      (a, b) => pt.periodicTable.symbolToNo(a) - pt.periodicTable.symbolToNo(b)
+    )) {
       data.push(this.renderTableData(symbol));
     }
     return(<>{data}</>);
