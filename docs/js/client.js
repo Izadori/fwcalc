@@ -90,7 +90,6 @@ class Layout extends React.Component {
         at: parseFloat(a) / parseFloat(atomCount),
         wt: (pt.periodicTable.getWeight(z) * a) / parseFloat(fw)
       });
-      console.log(ratio.get(symbol));
     }
 
     this.setState({
@@ -111,8 +110,8 @@ class Layout extends React.Component {
         <td className="table-data data-label">{symbol}</td>
         <td className="table-data data-label">{this.state.atoms.get(symbol)}</td>
         <td className="table-data data-value">{pt.periodicTable.getWeight(z)}</td>
-        <td className="table-data data-value">{(typeof at !== 'undefined') ? (parseInt(at * 10000 + .5) / 100).toString() : '---'}</td>
-        <td className="table-data data-value">{(typeof wt !== 'undefined') ? (parseInt(wt * 10000 + .5) / 100).toString() : '---'}</td>
+        <td className="table-data data-value">{(typeof at !== 'undefined') ? (parseInt(at * 10000 + .5) / 100) : '---'}</td>
+        <td className="table-data data-value">{(typeof wt !== 'undefined') ? (parseInt(wt * 10000 + .5) / 100) : '---'}</td>
       </tr>
     )
   }
