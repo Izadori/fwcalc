@@ -122,13 +122,17 @@ const table = [
 
 // 周期表クラス
 class PeriodicTable {
-  consutructor() {
+  constructor() {
+    this.symbolToNo = this.symbolToNo.bind(this);
+    this.getElementData = this.getElementData.bind(this);
+    this.getSymbol = this.getSymbol.bind(this);
+    this.getWeight = this.getWeight.bind(this);
     this.table = table;
   }
 
   symbolToNo(symbol) {
-    for(let i = 0; i < table.length; i++){
-      if(table[i].symbol === symbol){
+    for(let i = 0; i < this.table.length; i++){
+      if(this.table[i].symbol === symbol){
         return i + 1;
       }
     }
@@ -136,11 +140,11 @@ class PeriodicTable {
   }
 
   getElementData(atomNo) {
-    if(atomNo >= table.length){
+    if(atomNo >= this.table.length){
       return { z: -1, symbol: undefined, weight: -1 };
     }
     else{
-      return table[atomNo - 1];
+      return this.table[atomNo - 1];
     }
   }
 
@@ -153,14 +157,6 @@ class PeriodicTable {
     const tmp = this.getElementData(atomNo);
     return tmp.weight;
   }
-
-  compFuncByNoAscending(a, b) {
-    return this.symbolToNo(a) - this.symbolToNo(b);
-  }
-
-  compFuncByNoDescending(a, b) {
-    return this.symbolToNo(b) - this.symbolToNo(a);
-  }
 }
 
-module.exports.periodicTable = new PeriodicTable();
+module.exports.periodicTable = new PeriodicTable(table);
