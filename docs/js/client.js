@@ -36,7 +36,7 @@ class InputField extends React.Component {
 
 function FormulaWeight(props) {
   return (
-    <p id="fw">式量 = <span id="fw-value">{parseInt(props.fw * 1000) / 1000}</span></p>
+    <p id="fw">式量 = <span id="fw-value">{parseInt(props.fw * 1000 + .5) / 1000}</span></p>
   );
 }
 
@@ -111,8 +111,8 @@ class Layout extends React.Component {
         <td className="table-data data-label">{symbol}</td>
         <td className="table-data data-label">{this.state.atoms.get(symbol)}</td>
         <td className="table-data data-value">{pt.periodicTable.getWeight(z)}</td>
-        <td className="table-data data-value">{(typeof at !== 'undefined') ? (parseInt(at * 10000) / 100).toString() : '---'}</td>
-        <td className="table-data data-value">{(typeof wt !== 'undefined') ? (parseInt(wt * 10000) / 100).toString() : '---'}</td>
+        <td className="table-data data-value">{(typeof at !== 'undefined') ? (parseInt(at * 10000 + .5) / 100).toString() : '---'}</td>
+        <td className="table-data data-value">{(typeof wt !== 'undefined') ? (parseInt(wt * 10000 + .5) / 100).toString() : '---'}</td>
       </tr>
     )
   }
