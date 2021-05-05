@@ -106,7 +106,7 @@ class Layout extends React.Component {
       <tr key={z}>
         <td className="table-data data-label">{z}</td>
         <td className="table-data data-label">{symbol}</td>
-        <td className="table-data data-value">{this.state.atoms.get(symbol)}</td>
+        <td className="table-data data-label">{this.state.atoms.get(symbol)}</td>
         <td className="table-data data-value">{pt.periodicTable.getWeight(z)}</td>
         <td className="table-data data-value">{(typeof at !== 'undefined') ? (parseInt(at * 10000) / 100).toString() : '---'}</td>
         <td className="table-data data-value">{(typeof wt !== 'undefined') ? (parseInt(wt * 10000) / 100).toString() : '---'}</td>
