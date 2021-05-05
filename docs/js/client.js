@@ -78,16 +78,17 @@ class Layout extends React.Component {
 
     for(let symbol of atoms.keys()) {
       let z = pt.periodicTable.symbolToNo(symbol);
-      atomCount += atoms.get(symbol);
-      fw += pt.periodicTable.getWeight(z) * atoms.get(z);
+      let a = atoms.get(symbol);
+      atomCount += a;
+      fw += pt.periodicTable.getWeight(z) * a;
     }
 
     for(let symbol of atoms.keys()) {
       let z = pt.periodicTable.symbolToNo(symbol);
-      let a = atoms.get(z);
+      let a = atoms.get(symbol);
       ratio.set(symbol, {
         at: parseFloat(a) / parseFloat(atomCount),
-        wt: pt.periodicTable.getWeight(z) * a / fw
+        wt: (pt.periodicTable.getWeight(z) * a) / fw
       });
     }
 
