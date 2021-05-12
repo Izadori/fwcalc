@@ -140,7 +140,7 @@ class PeriodicTable {
   }
 
   getElementData(atomNo) {
-    if(atomNo >= this.table.length){
+    if(atomNo > this.table.length){
       return { z: -1, symbol: undefined, weight: -1 };
     }
     else{
