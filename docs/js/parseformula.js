@@ -12,6 +12,12 @@ const reRBracket = /\(((?:[A-Z][a-z]?[0-9]*)+)\)([0-9]*)/;
 const reRectBracketSplitter = /(\[[A-Za-z0-9\(\)]+\][0-9]*)/;
 // 角括弧を含む化学式のパース用
 const reRectBracket = /\[([A-Za-z0-9\(\)]+)\]([0-9]*)/;
+// 波括弧と水和水を含む化学式のチェック・分割用
+const reWaveBracketSplitter = /((?:\{[A-Za-z0-9\(\)\[\]]+\}[0-9]*|・[0-9]?H2O))/;
+// 波括弧を含む化学式のパース用
+const reWaveBracket = /\{([A-Za-z0-9\(\)\[\]]+)\}([0-9]*)/;
+// 水和水を含む化学式のパース用
+const reDot = /・([0-9]?)(H2O)/;
 
 // 化学式を解析する
 // 戻り値はMap
@@ -23,8 +29,56 @@ function parseFormula(formula) {
     return null;
   }
 
-  // 示性式対応のため'-''='を消去する（三重結合には対応しない）
-  for(let x of formula.replace(/\-|\=/g, '').split(reRectBracketSplitter)) {
+  // 示性式対応のため'-''=''≡'を消去する
+  for(let x of formula.replace(/\-|－|\=|＝|≡/g, '').split(reWaveBracketSplitter)) {
+    let n = 1;
+
+    if(x.length === 0) {
+      continue;
+    }
+    else if(x[0] === '{') {
+      const tmp = x.match(reWaveBracket);
+      tmpRet = parseFormulaRectBracket(tmp[1]);
+      n = (tmp[2] === "") ? 1 : Number(tmp[2]);
+    }
+    else if(x[0] === '・') {
+      const tmp = x.match(reDot);
+      tmpRet = parseFormulaRectBracket(tmp[2]);
+      n = (tmp[1] === "") ? 1 : Number(tmp[1]);
+    }
+    else{
+      tmpRet = parseFormulaRectBracket(x);
+    }
+
+    if(tmpRet === null) {
+      console.log('error: illegal formula.')
+      return null;
+    }
+
+    for(let [k, v] of tmpRet) {
+      if(ret.has(k)) {
+        ret.set(k, ret.get(k) + v * n);
+      }
+      else {
+        ret.set(k, v * n);
+      }
+    }
+    tmpRet.clear();
+  }
+
+  return ret;
+}
+
+// 波かっこのない化学式のパース
+function parseFormulaRectBracket(formula) {
+  let ret = new Map();
+  let tmpRet = new Map();
+
+  if(formula === "" || formula === null || typeof formula === 'undefined') {
+    return null;
+  }
+
+  for(let x of formula.split(reRectBracketSplitter)) {
     let n = 1;
 
     if(x.length === 0) {
@@ -137,3 +191,10 @@ function parseFormulaCore(formula) {
 }
 
 module.exports = parseFormula;
+
+/*
+console.log(parseFormula("CH3-(C＝O)OH"));
+console.log(parseFormula("C≡N"));
+console.log(parseFormula("NaKCO3・2H2O"));
+console.log(parseFormula("Pb{CH3COOH}4"));
+*/

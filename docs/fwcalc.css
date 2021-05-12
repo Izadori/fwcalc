@@ -2,6 +2,11 @@ body {
   font-size: 12pt;
 }
 
+#show-usage {
+  margin-bottom: 1rem;
+  margin-left: 2rem;
+}
+
 #chemical-formula-form {
   font-size: 16pt;
 }
@@ -13,6 +18,7 @@ body {
 
 #form-input {
   font-size: 16pt;
+  width: auto;
 }
 
 #form-button {
@@ -45,6 +51,10 @@ body {
   border: 1px solid black;
 }
 
+#caption-info {
+  margin-bottom: 0.5rem;
+}
+
 .table-header {
   text-align: center;
   border: 1px solid black;
@@ -60,4 +70,8 @@ body {
 
 .data-value {
   text-align: right;
+}
+
+#button-copy {
+  margin: 0.5rem 0;
 }

@@ -34,10 +34,88 @@ class InputField extends React.Component {
   }
 }
 
+function ShowUsage(props) {
+  return (
+    <details id="show-usage">
+      <summary>使い方</summary>
+      <ol>
+        <li>化学式を入力して計算ボタンを押してください。</li>
+        <li>元素記号、数字、&#40;&#41;&#91;&#93;&#123;&#125;、水和水の・（全角）が使用可能です。</li>
+      </ol>
+      <p><small>
+          原子量のデータは<a href="https://www.ptable.com/" target="_blank">Dynamic Periodic Table</a>(Jun 16, 2017 updated)を使用しました。
+      </small></p>
+    </details>
+  );
+}
+
 function FormulaWeight(props) {
   return (
     <p id="fw">式量 = <span id="fw-value">{parseInt(props.fw * 1000 + .5) / 1000}</span></p>
   );
+}
+
+function ElementInfoTable(props) {
+  let data = [];
+  let keys = [];
+
+  for(let symbol of props.atoms.keys()){
+    keys.push(symbol);
+  }
+
+  for(let symbol of keys.sort(
+    (a, b) => pt.periodicTable.symbolToNo(a) - pt.periodicTable.symbolToNo(b)
+  )) {
+    const at = props.ratio.get(symbol).at;
+    const wt = props.ratio.get(symbol).wt;
+    const z = pt.periodicTable.symbolToNo(symbol);
+    data.push(
+      <tr key={z}>
+        <td className="table-data data-label">{z}</td>
+        <td className="table-data data-label">{symbol}</td>
+        <td className="table-data data-label">{props.atoms.get(symbol)}</td>
+        <td className="table-data data-value">{pt.periodicTable.getWeight(z)}</td>
+        <td className="table-data data-value">{(typeof at !== 'undefined') ? (parseInt(at * 10000 + .5) / 100) : '---'}</td>
+        <td className="table-data data-value">{(typeof wt !== 'undefined') ? (parseInt(wt * 10000 + .5) / 100) : '---'}</td>
+      </tr>
+    );
+  }
+
+  return (
+    <table id="element-table">
+      <caption id="caption-info">元素情報</caption>
+      <thead>
+        <tr>
+          <th className="table-header">原子番号</th>
+          <th className="table-header">元素記号</th>
+          <th className="table-header">原子数</th>
+          <th className="table-header">原子量</th>
+          <th className="table-header">原子数比(%)</th>
+          <th className="table-header">質量比(%)</th>
+        </tr>
+      </thead>
+      <tbody>{data}</tbody>
+    </table>
+  );
+}
+
+class CopyToClipboadButton extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleClick = this.handleClick.bind(this);
+  }
+
+  handleClick() {
+    this.props.onClickCopy();
+  }
+
+  render() {
+    return (
+      <>
+        <button type="button" id="button-copy" onClick={this.handleClick}>結果をクリップボードにコピー</button>
+      </>
+    );
+  }
 }
 
 class Layout extends React.Component {
@@ -52,8 +130,7 @@ class Layout extends React.Component {
     };
     this.handleFieldChange = this.handleFieldChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.renderTableData = this.renderTableData.bind(this);
-    this.renderAllTableData = this.renderAllTableData.bind(this);
+    this.handleClickToCopy = this.handleClickToCopy.bind(this);
   }
 
   handleFieldChange(formula) {
@@ -100,34 +177,31 @@ class Layout extends React.Component {
     });
   }
 
-  renderTableData(symbol) {
-    const at = this.state.ratio.get(symbol).at;
-    const wt = this.state.ratio.get(symbol).wt;
-    const z = pt.periodicTable.symbolToNo(symbol);
-    return (
-      <tr key={z}>
-        <td className="table-data data-label">{z}</td>
-        <td className="table-data data-label">{symbol}</td>
-        <td className="table-data data-label">{this.state.atoms.get(symbol)}</td>
-        <td className="table-data data-value">{pt.periodicTable.getWeight(z)}</td>
-        <td className="table-data data-value">{(typeof at !== 'undefined') ? (parseInt(at * 10000 + .5) / 100) : '---'}</td>
-        <td className="table-data data-value">{(typeof wt !== 'undefined') ? (parseInt(wt * 10000 + .5) / 100) : '---'}</td>
-      </tr>
-    )
-  }
+  handleClickToCopy() {
+    if(this.state.atoms == null){
+      return;
+    }
 
-  renderAllTableData() {
-    let data = [];
     let keys = [];
+    let text = `式量\t${this.state.fw}\n`;
+    text += `原子番号\t元素記号\t原子数\t原子量\t原子数比(%)\t質量比(%)\n`;
+
     for(let symbol of this.state.atoms.keys()){
       keys.push(symbol);
     }
+
     for(let symbol of keys.sort(
       (a, b) => pt.periodicTable.symbolToNo(a) - pt.periodicTable.symbolToNo(b)
     )) {
-      data.push(this.renderTableData(symbol));
+      const at = this.state.ratio.get(symbol).at;
+      const wt = this.state.ratio.get(symbol).wt;
+      const z = pt.periodicTable.symbolToNo(symbol);
+      text += `${z}\t${symbol}\t${this.state.atoms.get(symbol)}\t${pt.periodicTable.getWeight(z)}\t`;
+      text += `${(typeof at !== 'undefined') ? (parseInt(at * 10000 + .5) / 100) : '---'}\t`;
+      text += `${(typeof wt !== 'undefined') ? (parseInt(wt * 10000 + .5) / 100) : '---'}\n`;
     }
-    return(<>{data}</>);
+
+    navigator.clipboard.writeText(text);
   }
 
   render() {
@@ -135,28 +209,18 @@ class Layout extends React.Component {
     return (
     <div>
       <h1>式量計算機</h1>
+      <ShowUsage />
       <InputField onFieldChange={this.handleFieldChange}
                   onFieldSubmit={this.handleSubmit}
                   formula={this.state.formula}
                   status={this.state.status}
       />
-      <FormulaWeight fw={this.state.fw}/>
-      <table id="element-table">
-          <caption>元素情報</caption>
-          <thead>
-            <tr>
-              <th className="table-header">原子番号</th>
-              <th className="table-header">元素記号</th>
-              <th className="table-header">原子数</th>
-              <th className="table-header">原子量</th>
-              <th className="table-header">原子数比(%)</th>
-              <th className="table-header">質量比(%)</th>
-            </tr>
-          </thead>
-          <tbody>
-            {this.renderAllTableData()}
-          </tbody>
-        </table>
+      <FormulaWeight fw={this.state.fw} />
+      <ElementInfoTable atoms={this.state.atoms} ratio={this.state.ratio} />
+      <CopyToClipboadButton onClickCopy={this.handleClickToCopy} />
+      <p>
+        <small>&copy; 2021 Izadori. All rights reserved.</small>
+      </p>
     </div>
     );
   }
