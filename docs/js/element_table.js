@@ -140,7 +140,7 @@ class PeriodicTable {
   }
 
   getElementData(atomNo) {
-    if(atomNo > this.table.length){
+    if(atomNo < 0 || atomNo > this.table.length){
       return { z: -1, symbol: undefined, weight: -1 };
     }
     else{
@@ -150,12 +150,12 @@ class PeriodicTable {
 
   getSymbol(atomNo) {
     const tmp = this.getElementData(atomNo);
-    return tmp.symbol;
+    return (tmp.symbol !== undefined) ? tmp.symbol : undefined;
   }
 
   getWeight(atomNo) {
     const tmp = this.getElementData(atomNo);
-    return tmp.weight;
+    return (tmp.weight !== undefined) ? tmp.weight : undefined;
   }
 }
 
