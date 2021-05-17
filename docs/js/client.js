@@ -1,16 +1,22 @@
-import React , { useState, useMemo, useCallback } from "react";
+import React , { useState, useRef } from "react";
 import ReactDOM from "react-dom";
 
 const parseFormula = require('./parseformula.js');
 const pt = require('./element_table');
 
 const InputField = (props) => {
+  const formulaField = useRef(null);
+  const handleClick = (e) => {
+    props.onFieldSubmit(formulaField.current.value);
+    e.preventDefault();
+  };
+
   return (
     <div>
       <form id="chemical-formula-form">
         <span id="form-title">化学式</span>
-        <input type="text" id="form-input" value={ props.formula } onChange={ props.onFieldChange } />
-        <button type="button" id="form-button" onClick={ props.onFieldSubmit }>計算</button>
+        <input type="text" id="form-input" ref={ formulaField } />
+        <button type="button" id="form-button" onClick={ handleClick }>計算</button>
         <span id="form-status-window">{ props.status }</span>
       </form>
     </div>
@@ -151,32 +157,18 @@ const updateResults = (atoms) => {
 }
 
 const Layout = () => {
-  const [ formula, setFormula ] = useState('');
   const [ atoms, setAtoms ] = useState(new Map());
-  let results = useMemo(() => updateResults(atoms), [atoms]);
+  const results = updateResults(atoms);
 
-  if(typeof results === 'undefined'){
-    results = { ratio: new Map(), fw: 0.0, status: ''};
-  }
-
-  const onChange = useCallback((e) => {
-    setFormula(e.target.value);
-  }, []);
-
-  const onSubmit = useCallback((e) => {
-    setAtoms(parseFormula(formula));
-    e.preventDefault();
-  }, [formula]);
+  const onSubmit = (text) => {
+    setAtoms(parseFormula(text));
+  };
 
   return (
     <div>
       <h1>式量計算機</h1>
       <ShowUsage />
-      <InputField onFieldChange={ onChange }
-                  onFieldSubmit={ onSubmit }
-                  formula={ formula }
-                  status={ results.status }
-      />
+      <InputField onFieldSubmit={ onSubmit } status={ results.status } />
       <FormulaWeight fw={ results.fw } />
       <ElementInfoTable atoms={ atoms == null ? new Map() : atoms } ratio={ results.ratio } />
       <CopyToClipboadButton atoms={ atoms == null ? new Map() : atoms } results={ results } />
