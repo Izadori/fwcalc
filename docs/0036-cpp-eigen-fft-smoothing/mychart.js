@@ -2014,10 +2014,10 @@ const myChart1 = new Chart(ctx1, {
           { x: 9.99, y: 1.10716 },
           { x: 10.0, y: 1.11502 },
         ],
-        label: "生データ",
+        label: "スムージング後",
         pointRadius: 0,
         borderWidth: 1,
-        borderColor: "rgba(0, 0, 0, 0.4)",
+        borderColor: "rgb(255, 0, 0)",
         showLine: true,
         cubicInterpolationMode: "monotone",
       },
@@ -2029,7 +2029,7 @@ const myChart1 = new Chart(ctx1, {
     plugins: {
       // グラフタイトルの設定
       title: {
-        text: "Whittaker Smoother",
+        text: "高速フーリエ変換によるスムージング",
         display: true,
         font: {
           size: 16,
