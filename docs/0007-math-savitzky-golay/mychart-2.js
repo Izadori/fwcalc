@@ -2065,8 +2065,8 @@ const myChart2 = new Chart(ctx2, {
             const animation = chart.config.options.animation;
             // アニメーションを一時OFFにする
             chart.config.options.animation = false;
-            // Y軸の最小値を-5にする
-            chart.config.options.scales.y.min = -5;
+            // Y軸の最小値を-200にする
+            chart.config.options.scales.y.min = -200;
             // 画面を更新する
             chart.update();
             // アニメーションの設定を元に戻す
