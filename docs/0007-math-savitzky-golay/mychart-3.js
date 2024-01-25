@@ -2105,8 +2105,6 @@ const myChart3 = new Chart(ctx3, {
       y: {
         type: "linear",
         display: true,
-        min: -3,
-        max: 3,
         title: {
           display: true,
           text: "y",
