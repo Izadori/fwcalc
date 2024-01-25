@@ -2078,7 +2078,7 @@ const myChart3 = new Chart(ctx3, {
             min: 0,
           },
           y: {
-            min: -3,
+            min: -25000,
           },
         },
       },

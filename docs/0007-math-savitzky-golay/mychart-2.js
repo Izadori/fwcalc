@@ -2078,7 +2078,7 @@ const myChart2 = new Chart(ctx2, {
             min: 0,
           },
           y: {
-            min: -5,
+            min: -200,
           },
         },
       },
